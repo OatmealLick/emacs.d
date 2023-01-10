@@ -12,6 +12,25 @@
 ;; maximize frame
 (add-hook 'window-setup-hook 'toggle-frame-maximized t)
 
+;; this supposedly helps with M-x shell but I do not see the difference
+(setq explicit-shell-file-name "/usr/bin/zsh")
+(setq shell-file-name "zsh")
+(setq explicit-zsh-args '("--login" "--interactive"))
+(defun zsh-shell-mode-setup ()
+  (setq-local comint-process-echoes t))
+(add-hook 'shell-mode-hook #'zsh-shell-mode-setup)
+
+;; this supposedly helps with M-x [term|ansi-term], yet to see the difference
+;; M-p and M-n works as up and down
+;;(defun mp-term-custom-settings ()
+;;  (local-set-key (kbd "M-p") 'term-send-up)
+;;  (local-set-key (kbd "M-n") 'term-send-down))
+;;(add-hook 'term-load-hook #'mp-term-custom-settings)
+
+;;(define-key term-raw-map (kbd "M-o") 'other-window)
+;;(define-key term-raw-map (kbd "M-p") 'term-send-up)
+;;(define-key term-raw-map (kbd "M-n") 'term-send-down)
+
 (setq ring-bell-function 'ignore)
 
 (load-theme 'tango-dark)
@@ -33,6 +52,12 @@
 
 (require 'use-package)
 (setq use-package-always-ensure t)
+
+(use-package evil
+  :ensure t)
+
+(use-package vterm
+  :ensure t)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -75,3 +100,9 @@
 (helm-mode 1)
 (global-set-key (kbd "M-x") 'helm-M-x)
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
+
+;; kill all buffers except the active one
+(defun kill-other-buffers ()
+      "Kill all other buffers."
+      (interactive)
+      (mapc 'kill-buffer (delq (current-buffer) (buffer-list))))
