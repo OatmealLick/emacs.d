@@ -70,7 +70,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages '(projectile helm elpy which-key evil use-package)))
+ '(package-selected-packages
+   '(f lsp-mode lsp-pyright projectile helm elpy which-key evil use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -80,15 +81,14 @@
 
 ;; TODO Figure it out Alexander, that's an order from your commander
 
+(require 'evil)
+(evil-mode 1)
 ;;(setq evil-want-integration t)
 ;;(setq evil-want-keybinding nil)
 (setq evil-want-C-u-scroll t)
 ;;(setq evil-want-C-i-jump nil)
 ;;(setq evil-respect-visual-line-mode t)
 ;;(setq evil-undo-system 'undo-tree)
-(require 'evil)
-
-(evil-mode 1)
 
 ;;(use-package elpy
 ;;  :ensure t
@@ -106,9 +106,21 @@
 (helm-mode 1)
 (global-set-key (kbd "M-x") 'helm-M-x)
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
+(define-key helm-find-files-map (kbd "C-i") 'helm-ff-TAB)
+(setq helm-ff-DEL-up-one-level-maybe 1)
 
 ;; kill all buffers except the active one
 (defun kill-other-buffers ()
       "Kill all other buffers."
       (interactive)
       (mapc 'kill-buffer (delq (current-buffer) (buffer-list))))
+
+(use-package lsp-mode
+  :ensure t)
+
+;; python lsp
+(use-package lsp-pyright
+  :ensure t
+  :hook (python-mode . (lambda ()
+    (require 'lsp-pyright)
+    (lsp))))  ; or lsp-deferred
