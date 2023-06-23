@@ -35,13 +35,11 @@
 
 (load-theme 'tango-dark)
 
-
+;; The 'package.el' is built-in, hence no use-package
 (require 'package)
-
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
                          ("org" . "https://orgmode.org/elpa/")
                          ("elpa" . "https://elpa.gnu.org/packages/")))
-
 (package-initialize)
 (unless package-archive-contents
  (package-refresh-contents))
@@ -53,8 +51,11 @@
 (require 'use-package)
 (setq use-package-always-ensure t)
 
-(use-package evil
-  :ensure t)
+;; evil configuration
+;; (use-package evil
+;;   :ensure t)
+;; ;; TODO Figure it out Alexander, that's the order from your commander
+;; either use use-package and init, or require + standard setup from evil page
 
 (use-package vterm
   :ensure t)
@@ -62,38 +63,36 @@
 (use-package projectile
   :ensure t)
 
-(projectile-mode 1)
+(projectile-mode +1)
 (define-key projectile-mode-map (kbd "M-p") 'projectile-command-map)
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(f lsp-mode lsp-pyright projectile helm elpy which-key evil use-package)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+;; disable customize
+(dolist (sym '(customize-option customize-browse customize-group customize-face
+               customize-rogue customize-saved customize-apropos
+               customize-changed customize-unsaved customize-variable
+               customize-set-value customize-customized customize-set-variable
+               customize-apropos-faces customize-save-variable
+               customize-apropos-groups customize-apropos-options
+               customize-changed-options customize-save-customized))
+  (put sym 'disabled "Doom like removal of `customize'"))
+(put 'customize-themes 'disabled "Use `load-theme'")
 
-;; TODO Figure it out Alexander, that's an order from your commander
+(defun setup-evil ()
+    (setq evil-want-C-u-scroll t)
+    (setq evil-undo-system 'undo-redo)
+    ;;(setq evil-want-C-d-scroll t)
+    ;;(setq evil-want-integration t)
+    ;;(setq evil-want-keybinding nil)
+    ;;(setq evil-want-C-i-jump nil)
+    ;;(setq evil-respect-visual-line-mode t)
 
-(require 'evil)
-(evil-mode 1)
-;;(setq evil-want-integration t)
-;;(setq evil-want-keybinding nil)
-(setq evil-want-C-u-scroll t)
-;;(setq evil-want-C-i-jump nil)
-;;(setq evil-respect-visual-line-mode t)
-;;(setq evil-undo-system 'undo-tree)
+    (unless (package-installed-p 'evil)
+    (package-install 'evil))
+    (require 'evil)
+    (evil-mode 1)
+)
 
-;;(use-package elpy
-;;  :ensure t
-;;  :init
-;;  (elpy-enable))
+(setup-evil)
 
 ;; disable lockfiles starting with .# and messing up dbt
 (setq create-lockfiles nil)
@@ -124,3 +123,23 @@
   :hook (python-mode . (lambda ()
     (require 'lsp-pyright)
     (lsp))))  ; or lsp-deferred
+
+;; make sure C-r in vterm works as C-r in terminal
+(defun setup-vterm-mode ()
+  (evil-local-set-key 'insert (kbd "C-r") 'vterm-send-C-r))
+
+(add-hook 'vterm-mode-hook 'setup-vterm-mode)
+
+;; open config file with shortcut
+(defun find-file-config-file ()
+  "Find and open config file"
+  (interactive)
+  (find-file "~/.emacs.d/init.el"))
+
+(global-set-key (kbd "M-q") 'find-file-config-file)
+
+
+(use-package terraform-mode)
+
+(use-package which-key)
+(which-key-mode)
