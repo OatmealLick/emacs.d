@@ -5,7 +5,7 @@
 (tooltip-mode -1)
 (set-fringe-mode 10)
 
-(set-face-attribute 'default nil :height 150)
+(set-face-attribute 'default nil :height 128)
 
 (menu-bar-mode -1)
 
@@ -50,15 +50,6 @@
 
 (require 'use-package)
 (setq use-package-always-ensure t)
-
-;; evil configuration
-;; (use-package evil
-;;   :ensure t)
-;; ;; TODO Figure it out Alexander, that's the order from your commander
-;; either use use-package and init, or require + standard setup from evil page
-
-(use-package vterm
-  :ensure t)
 
 (use-package projectile
   :ensure t)
@@ -136,10 +127,22 @@
   (interactive)
   (find-file "~/.emacs.d/init.el"))
 
+
 (global-set-key (kbd "M-q") 'find-file-config-file)
 
+;; kill emacs 
+(global-set-key (kbd "M-<f4>") 'kill-emacs)
 
 (use-package terraform-mode)
 
 (use-package which-key)
 (which-key-mode)
+
+;; (when (string-equal system-type "windows-nt")
+
+;; (progn
+;; (setq cygwin-bin "C:\\cygwin64\\bin")
+;; (setenv "PATH"
+;; (concat cygwin-bin ";" ))
+;; (setq exec-path
+;; '(cygwin-bin gnu-bin)))) 
