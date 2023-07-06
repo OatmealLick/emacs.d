@@ -5,6 +5,10 @@
 (tooltip-mode -1)
 (set-fringe-mode 10)
 
+(setq make-backup-files nil)
+(setq scroll-conservatively 101)
+(setq scroll-step 1)
+
 (set-face-attribute 'default nil :height 128)
 
 (menu-bar-mode -1)
@@ -56,6 +60,7 @@
 
 (projectile-mode +1)
 (define-key projectile-mode-map (kbd "M-p") 'projectile-command-map)
+(setq projectile-project-search-path '("~/projects/" "~/workspace/"))
 
 ;; disable customize
 (dolist (sym '(customize-option customize-browse customize-group customize-face
@@ -106,14 +111,39 @@
       (mapc 'kill-buffer (delq (current-buffer) (buffer-list))))
 
 (use-package lsp-mode
-  :ensure t)
+  :config
+  (lsp-register-custom-settings
+   '(("pyls.plugins.pyls_mypy.enabled" t t)
+     ("pyls.plugins.pyls_mypy.live_mode" nil t)
+     ("pyls.plugins.pyls_black.enabled" t t)
+     ("pyls.plugins.pyls_isort.enabled" t t)))
+  :hook
+  ((python-mode . lsp)))
 
-;; python lsp
-(use-package lsp-pyright
+(use-package lsp-ui
+  :commands lsp-ui-mode)
+
+(use-package pyvenv
+  :config
+  (pyvenv-mode t))
+
+;; autocompletion
+(unless (package-installed-p 'company)
+   (package-install 'company))
+(require 'company)
+(add-hook 'after-init-hook 'global-company-mode)
+
+;; syntax checking
+(use-package flycheck
   :ensure t
-  :hook (python-mode . (lambda ()
-    (require 'lsp-pyright)
-    (lsp))))  ; or lsp-deferred
+  :init (global-flycheck-mode))
+(add-hook 'after-init-hook #'global-flycheck-mode)
+
+;; backend for company python
+(use-package company-jedi)
+(defun my/python-mode-hook ()
+  (add-to-list 'company-backends 'company-jedi))
+(add-hook 'python-mode-hook 'my/python-mode-hook)
 
 ;; make sure C-r in vterm works as C-r in terminal
 (defun setup-vterm-mode ()
@@ -131,19 +161,20 @@
 (global-set-key (kbd "M-q") 'find-file-config-file)
 
 
-(use-package terraform-mode)
+(use-package terraform-mode
+  :custom (terraform-format-on-save t)
+)
 
 (use-package which-key)
 (which-key-mode)
 
-;; (when (string-equal system-type "windows-nt")
+(setenv "WORKON_HOME" "~/.pyenv/versions")
 
-;; (progn
-;; (setq cygwin-bin "C:\\cygwin64\\bin")
-;; (setenv "PATH"
-;; (concat cygwin-bin ";" ))
-;; (setq exec-path
-;; '(cygwin-bin gnu-bin)))) 
+(use-package company-terraform)
+(company-terraform-init)
+
+(use-package neotree)
+(global-set-key [f8] 'neotree-toggle)
 
 ;; kill emacs
 (global-set-key (kbd "M-<f4>") 'kill-emacs)
