@@ -130,8 +130,6 @@
 
 (global-set-key (kbd "M-q") 'find-file-config-file)
 
-;; kill emacs 
-(global-set-key (kbd "M-<f4>") 'kill-emacs)
 
 (use-package terraform-mode)
 
@@ -146,3 +144,7 @@
 ;; (concat cygwin-bin ";" ))
 ;; (setq exec-path
 ;; '(cygwin-bin gnu-bin)))) 
+
+;; kill emacs
+(global-set-key (kbd "M-<f4>") 'kill-emacs)
+
