@@ -104,6 +104,9 @@
 (define-key helm-find-files-map (kbd "C-i") 'helm-ff-TAB)
 (setq helm-ff-DEL-up-one-level-maybe 1)
 
+(use-package helm-flx)
+(helm-flx-mode 1)
+
 ;; kill all buffers except the active one
 (defun kill-other-buffers ()
       "Kill all other buffers."
@@ -127,23 +130,23 @@
   :config
   (pyvenv-mode t))
 
-;; autocompletion
-(unless (package-installed-p 'company)
-   (package-install 'company))
-(require 'company)
-(add-hook 'after-init-hook 'global-company-mode)
+;; ;; autocompletion
+;; (unless (package-installed-p 'company)
+;;    (package-install 'company))
+;; (require 'company)
+;; (add-hook 'after-init-hook 'global-company-mode)
 
-;; syntax checking
-(use-package flycheck
-  :ensure t
-  :init (global-flycheck-mode))
-(add-hook 'after-init-hook #'global-flycheck-mode)
+;; ;; syntax checking
+;; (use-package flycheck
+;;   :ensure t
+;;   :init (global-flycheck-mode))
+;; (add-hook 'after-init-hook #'global-flycheck-mode)
 
-;; backend for company python
-(use-package company-jedi)
-(defun my/python-mode-hook ()
-  (add-to-list 'company-backends 'company-jedi))
-(add-hook 'python-mode-hook 'my/python-mode-hook)
+;; ;; backend for company python
+;; (use-package company-jedi)
+;; (defun my/python-mode-hook ()
+;;   (add-to-list 'company-backends 'company-jedi))
+;; (add-hook 'python-mode-hook 'my/python-mode-hook)
 
 ;; make sure C-r in vterm works as C-r in terminal
 (defun setup-vterm-mode ()
@@ -170,8 +173,8 @@
 
 (setenv "WORKON_HOME" "~/.pyenv/versions")
 
-(use-package company-terraform)
-(company-terraform-init)
+;; (use-package company-terraform)
+;; (company-terraform-init)
 
 (use-package neotree)
 (global-set-key [f8] 'neotree-toggle)
@@ -179,3 +182,26 @@
 ;; kill emacs
 (global-set-key (kbd "M-<f4>") 'kill-emacs)
 
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(neotree which-key vterm use-package terraform-mode pyvenv projectile lsp-ui lsp-pyright helm evil)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+
+(evil-define-key 'normal neotree-mode-map (kbd "TAB") 'neotree-enter)
+(evil-define-key 'normal neotree-mode-map (kbd "SPC") 'neotree-quick-look)
+(evil-define-key 'normal neotree-mode-map (kbd "q") 'neotree-hide)
+(evil-define-key 'normal neotree-mode-map (kbd "RET") 'neotree-enter)
+(evil-define-key 'normal neotree-mode-map (kbd "g") 'neotree-refresh)
+(evil-define-key 'normal neotree-mode-map (kbd "n") 'neotree-next-line)
+(evil-define-key 'normal neotree-mode-map (kbd "p") 'neotree-previous-line)
+(evil-define-key 'normal neotree-mode-map (kbd "A") 'neotree-stretch-toggle)
+(evil-define-key 'normal neotree-mode-map (kbd "H") 'neotree-hidden-file-toggle)
